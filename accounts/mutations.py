@@ -66,7 +66,7 @@ class UpdateMe(relay.ClientIDMutation):
             try:
                 user = get_user_model().objects.get(email=email)
                 raise GraphQLError(
-                    "Ya existe un usuario con este correo electrónico.")
+                    "El correo electrónico no es válido.")
             except user.DoesNotExist:
                 pass
 
