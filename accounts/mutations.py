@@ -57,7 +57,6 @@ class UpdateMe(relay.ClientIDMutation):
         pass
 
     @classmethod
-    @login_required
     def mutate_and_get_payload(cls, root, info, **input):
         user = info.context.user
         email = input.get('email')
@@ -87,7 +86,6 @@ class ChangePassword(relay.ClientIDMutation):
         new_password = String(required=True)
 
     @classmethod
-    @login_required
     def mutate_and_get_payload(cls, root, info, **input):
         user = info.context.user
 
