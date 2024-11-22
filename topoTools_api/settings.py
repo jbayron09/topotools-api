@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
     # Custom Apps
     'accounts.apps.AccountsConfig',
+    'equipments.apps.EquipmentsConfig',
 ]
 
 MIDDLEWARE = [
@@ -144,7 +145,7 @@ GRAPHENE = {
     'MIDDLEWARE': [
         "topoTools_api.middleware.LoginRequiredMiddleware",
         "graphql_jwt.middleware.JSONWebTokenMiddleware",
-        # "topoTools_api.middleware.UserDataMiddleware",
+        "topoTools_api.middleware.UserDataMiddleware",
     ],
 
 }
