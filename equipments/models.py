@@ -1,5 +1,9 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
+
+from equipments.choices import EQUIPMENT_TYPES_CHOICES
+from equipments.constants import equipment_types as types
+
 
 class Equipment(models.Model):
     user = models.ForeignKey(
@@ -18,13 +22,8 @@ class Equipment(models.Model):
         max_length=50,
         null=True,
         verbose_name="Tipo de Equipo",
-        choices=[
-            ("total_station", "Estación Total"),
-            ("gps", "GPS"),
-            ("level", "Nivel"),
-            ("theodolite", "Teodolito"),
-            ("other", "Otro"),
-        ],
+        choices=EQUIPMENT_TYPES_CHOICES,
+        default=types.OTHER
     )
 
     # Campos técnicos
