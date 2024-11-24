@@ -24,11 +24,15 @@ class LoginRequiredMiddleware:
 class UserDataMiddleware:
     def resolve(self, next, root, info, **kwargs):
         if info.operation.operation == OperationType.QUERY:
+            # Permitir consultar el esquema
+            if info.field_name == "__schema":
+                return next(root, info, **kwargs)
+
             user = info.context.user
             if not user.is_authenticated:
-                raise PermissionDenied("Authentication required to perform this action.")
+                raise PermissionDenied(_("Authentication required to perform this action."))
 
             if hasattr(root, "user") and root.user != user:
-                raise PermissionDenied("You do not have permission to view this data.")
+                raise PermissionDenied(_("You do not have permission to view this data."))
 
         return next(root, info, **kwargs)

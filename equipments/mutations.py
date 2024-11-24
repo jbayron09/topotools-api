@@ -2,6 +2,7 @@ from graphene import relay, Field, String, Float
 from graphql import GraphQLError
 from graphql_relay import from_global_id
 
+from equipments.enums import EquipmentType
 from equipments.models import Equipment
 from equipments.nodes import EquipmentNode
 
@@ -11,7 +12,7 @@ class EquipmentFieldBase:
     serial_number = String(required=True)
     brand = String(required=False)
     model = String(required=False)
-    equipment_type = String(required=False)
+    equipment_type = EquipmentType(required=False)
     distance_constant = Float(required=True)
     distance_ppm = Float(required=True)
     angle = Float(required=True)
