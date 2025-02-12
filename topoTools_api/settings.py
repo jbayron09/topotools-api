@@ -145,7 +145,6 @@ GRAPHENE = {
     'MIDDLEWARE': [
         "topoTools_api.middleware.LoginRequiredMiddleware",
         "graphql_jwt.middleware.JSONWebTokenMiddleware",
-        "topoTools_api.middleware.UserDataMiddleware",
     ],
 
 }
