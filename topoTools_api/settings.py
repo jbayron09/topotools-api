@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     # Custom Apps
     'accounts.apps.AccountsConfig',
     'equipments.apps.EquipmentsConfig',
+    'transformations3d.apps.Transformations3DConfig',
 ]
 
 MIDDLEWARE = [
