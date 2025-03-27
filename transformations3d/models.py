@@ -1,5 +1,8 @@
 from django.conf import settings
 from django.db import models
+from transformations3d.choices import TRANSFORMATION_TYPE_CHOICES
+from transformations3d.constants import transformation_types as types
+from transformations3d.validators import validate_points
 
 
 class Transformation3d(models.Model):
@@ -9,41 +12,48 @@ class Transformation3d(models.Model):
         related_name="transformations3d",
         verbose_name="Usuario"
     )
-    name = models.CharField(max_length=200, verbose_name="Nombre del Ajuste")
-    description = models.TextField(null=True, blank=True, verbose_name="Descripción")
-    status = models.CharField(
+
+    name = models.CharField(max_length=255, verbose_name="Nombre de la transformación")
+    description = models.TextField(blank=True, verbose_name="Descripción")
+    transformation_type = models.CharField(
         max_length=20,
-        choices=[("pending", "Pendiente"), ("confirmed", "Confirmado")],
-        default="pending",
-        verbose_name="Estado del Ajuste"
+        choices=TRANSFORMATION_TYPE_CHOICES,
+        verbose_name="Tipo de transformación",
+        default=types.HELMERT,
     )
 
-    # Parámetros y resultados en JSON (para mayor flexibilidad)
-    parameters = models.JSONField(verbose_name="Parámetros de Transformación")
-    results = models.JSONField(null=True, blank=True, verbose_name="Resultados del Ajuste")
+    parameters = models.JSONField(verbose_name="Parámetros de transformación", blank=True)
+    results = models.JSONField(verbose_name="Resultados de la transformación", blank=True)
 
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última Actualización")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última actualización")
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.name} - {self.get_status_display()}"
+        return f"{self.name} - {self.get_transformation_type_display()}"
 
 
-class AdjustmentPoint(models.Model):
-    adjustment = models.ForeignKey(
+class TransformationPoints(models.Model):
+    transformation = models.OneToOneField(
         Transformation3d,
         on_delete=models.CASCADE,
-        related_name="points",
-        verbose_name="Ajuste Relacionado"
+        related_name="transformation_points",
+        verbose_name="Puntos de transformación"
     )
-    origin_points = models.JSONField(verbose_name="Puntos de Origen")  # Lista de puntos [{x, y, z}, ...]
-    destination_points = models.JSONField(verbose_name="Puntos de Destino")  # Lista de puntos [{x, y, z}, ...]
 
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última Actualización")
+    origin_points = models.JSONField(
+        verbose_name="Puntos de Origen",
+        validators=[validate_points]
+    )
+    destination_points = models.JSONField(
+        verbose_name="Puntos de Destino",
+        validators=[validate_points]
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última actualización")
 
     def __str__(self):
-        return f"Puntos de {self.adjustment.name}"
+        return f"Puntos de {self.transformation.name} ({self.transformation.get_transformation_type_display()})"
